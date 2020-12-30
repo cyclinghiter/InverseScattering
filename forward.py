@@ -35,7 +35,7 @@ Xp = X.reshape(-1,1)
 Yp = Y.reshape(-1,1)
 r = np.sqrt((X-Xp)**2 + (Y-Yp)**2)
 print("calculating Omega region green function")
-G = 1J/4 * hankel1(0, k*r)
+G = 1J/4 * hankel1(0, k*np.sqrt(constants.epsilon_0)*r)
 G = np.nan_to_num(G)
 
 # Gamma region configuration
@@ -60,7 +60,7 @@ Omega = Omega.flatten()
 
 # Omega region function
 
-f = k**2 * np.diag(Omega -1)
+f = k**2 * constants.epsilon_0 * np.diag(Omega -1)
 A = np.eye(len(f)) - np.matmul(G, f)
 
 
@@ -90,8 +90,7 @@ while iter < 120:
     gamma = ((np.linalg.norm(g) / np.linalg.norm(np.matmul(A,g))))**2
     if iter % 1 == 0:
         print("now : {}, step : {}".format(np.linalg.norm(g),iter))
-    if np.linalg.norm(g) < delta:
-        break
+
     u = s - gamma * g
     u_prev = u
     u_prevprev = u_prev
@@ -99,7 +98,9 @@ while iter < 120:
     iter += 1
 
 # total field
-u_p = np.matmul(H, np.matmul(f,u)) * constants.epsilon_0
+u_p = np.matmul(H, np.matmul(f,u)) / np.sqrt(constants.epsilon_0)
 u_p = u_p.reshape(250,250)
-u_p[125-47:125+47, 125-47:125+47] =np.matmul(G, np.matmul(f,u)).reshape(94,94) * constants.epsilon_0
+u_p[125-47:125+47, 125-47:125+47] =np.matmul(G, np.matmul(f,u)).reshape(94,94) / np.sqrt(constants.epsilon_0)
 plt.imshow(np.abs(u_p+u_input), cmap='jet')
+plt.show
+print(u_p)
