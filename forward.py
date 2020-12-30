@@ -54,12 +54,12 @@ plt.imshow(Omega)
 plt.show()
 Omega = Omega.flatten()
 
-f = k**2 *constants.epsilon_0 * np.diag((Omega) -1)
+f = k**2 * constants.epsilon_0 * np.diag((Omega) -1)
 A = np.eye(len(f)) - np.matmul(G, f)
 
 #input field
 r = np.sqrt(((X_g+(1000/4.8-125)*dx)**2+(Y_g-125*dx)**2).reshape(250,250)[125-47:125+47,125-47:125+47].flatten())
-u_in = np.exp(1J * k*r)
+u_in = np.sin(k*r)
 plt.imshow(np.real(u_in.reshape(94,94)))
 plt.show()
 
