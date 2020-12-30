@@ -35,7 +35,7 @@ Xp = X.reshape(-1,1)
 Yp = Y.reshape(-1,1)
 r = np.sqrt((X-Xp)**2 + (Y-Yp)**2)
 print("calculating Omega region green function")
-G = 1J/4 * hankel1(0, k*np.sqrt(constants.epsilon_0)*r)
+G = 1J/4 * hankel1(0, k*r)
 G = np.nan_to_num(G)
 
 # Gamma region configuration
@@ -44,7 +44,7 @@ y_gamma = np.arange(250) * dy
 X_g, Y_g = np.meshgrid(x_gamma, y_gamma)
 X_g = X_g.flatten().reshape(-1,1)
 Y_g = Y_g.flatten().reshape(-1,1)
-r_g = np.sqrt((X_g-(X+78*dx))**2 +(Y_g-(Y+78*dx))**2)
+r_g = np.sqrt(((X+78*dx)-X_g)**2 +((Y+78*dx)-Y_g)**2)
 print("calculating Gamma region green function")
 H = 1J/4 * hankel1(0, k*r_g)
 H = np.nan_to_num(H)
@@ -57,20 +57,17 @@ Omega = eps[125-47:125+47, 125-47:125+47].copy()
 # plt.show()
 Omega = Omega.flatten()
 
-
 # Omega region function
-
-f = k**2 * constants.epsilon_0 * np.diag(Omega -1)
+f = k**2*constants.epsilon_0* np.diag(Omega -1)
 A = np.eye(len(f)) - np.matmul(G, f)
 
-
 # input function
-
-u_input = np.sin(k*(np.sqrt((X_g-(1000/4.8+125)*dx)**2+(Y_g-125*dx)**2))).reshape(250,250)
+rad = np.sqrt((X_g-1000*mm-125*dx)**2+(Y_g-125*dx)**2).reshape(250,250)
+u_input = np.exp(1J*k*rad)
 u_in = u_input[125-47:125+47,125-47:125+47].flatten()
 # u_in = np.ones((250,250)).reshape(250,250)[125-47:125+47,125-47:125+47].flatten()
-# plt.imshow(np.real(u_in.reshape(94,94)))
-# plt.show()
+plt.imshow(np.real(u_in.reshape(94,94)))
+plt.show()
 
 
 # iterative parameter configuration
@@ -87,10 +84,11 @@ while iter < 120:
     mu = (1 - t_prev) / t
     s = (1 - mu)*u_prev + mu*u_prevprev
     g = np.matmul(np.conj(A.T), (np.matmul(A,s) - u_in))
-    gamma = ((np.linalg.norm(g) / np.linalg.norm(np.matmul(A,g))))**2
+    gamma = ((np.linalg.norm(g) / np.linalg.norm(np.matmul(A,g))))
     if iter % 1 == 0:
         print("now : {}, step : {}".format(np.linalg.norm(g),iter))
-
+    if np.linalg.norm(g) < delta:
+        break
     u = s - gamma * g
     u_prev = u
     u_prevprev = u_prev
@@ -98,9 +96,8 @@ while iter < 120:
     iter += 1
 
 # total field
-u_p = np.matmul(H, np.matmul(f,u)) / np.sqrt(constants.epsilon_0)
+u_p = np.matmul(H, np.matmul(f,u))
 u_p = u_p.reshape(250,250)
-u_p[125-47:125+47, 125-47:125+47] =np.matmul(G, np.matmul(f,u)).reshape(94,94) / np.sqrt(constants.epsilon_0)
+u_p[125-47:125+47, 125-47:125+47] =np.matmul(G, np.matmul(f,u)).reshape(94,94)
 plt.imshow(np.abs(u_p+u_input), cmap='jet')
-plt.show
-print(u_p)
+plt.show()
