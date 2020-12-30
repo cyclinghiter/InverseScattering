@@ -71,7 +71,7 @@ plt.show()
 
 
 # iterative parameter configuration
-delta = 5*10e-11*np.linalg.norm(u_in)
+delta = 5*10e-7*np.linalg.norm(u_in)
 u_prev = u_in
 u_prevprev = u_in
 t_prev = 0
@@ -99,5 +99,5 @@ while iter < 120:
 u_p = np.matmul(H, np.matmul(f,u))
 u_p = u_p.reshape(250,250)
 u_p[125-47:125+47, 125-47:125+47] =np.matmul(G, np.matmul(f,u)).reshape(94,94)
-plt.imshow(np.abs(u_p+u_input), cmap='jet')
+plt.imshow(np.abs(u_p), cmap='jet')
 plt.show()
