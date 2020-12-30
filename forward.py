@@ -71,7 +71,7 @@ plt.show()
 
 
 # iterative parameter configuration
-delta = 5*10e-7*np.linalg.norm(u_in)
+delta = 5*10e-11*np.linalg.norm(u_in)
 u_prev = u_in
 u_prevprev = u_in
 t_prev = 0
@@ -84,7 +84,7 @@ while iter < 120:
     mu = (1 - t_prev) / t
     s = (1 - mu)*u_prev + mu*u_prevprev
     g = np.matmul(np.conj(A.T), (np.matmul(A,s) - u_in))
-    gamma = ((np.linalg.norm(g) / np.linalg.norm(np.matmul(A,g))))
+    gamma = ((np.linalg.norm(g) / np.linalg.norm(np.matmul(A,g))))**2
     if iter % 1 == 0:
         print("now : {}, step : {}".format(np.linalg.norm(g),iter))
     if np.linalg.norm(g) < delta:
