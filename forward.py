@@ -49,7 +49,6 @@ print("calculating Gamma region green function")
 H = 1J/4 * hankel1(0, k*r_g)
 H = np.nan_to_num(H)
 
-
 # Omega region scatterer.
 
 Omega = eps[125-47:125+47, 125-47:125+47].copy()
@@ -79,7 +78,7 @@ iter = 1
 
 #iteration
 print("iteration starts")
-while iter < 10:
+while iter < 120:
     t = (1 + np.sqrt(1+4*t_prev**2))/2
     mu = (1 - t_prev) / t
     s = (1 - mu)*u_prev + mu*u_prevprev
