@@ -8,6 +8,7 @@ from scipy import constants
 
 from structure import *
 
+
 mm = 1e-3
 c = 3e8
 dx = 4.8 * mm
@@ -37,6 +38,7 @@ r = np.sqrt((X-Xp)**2 + (Y-Yp)**2)
 print("calculating Omega region green function")
 G = 1J/4 * hankel1(0, k*r)
 G = np.nan_to_num(G)
+plt.imshow(np.abs(G))
 
 # Gamma region configuration
 x_gamma = np.arange(250) * dx
@@ -48,6 +50,7 @@ r_g = np.sqrt(((X+78*dx)-X_g)**2 +((Y+78*dx)-Y_g)**2)
 print("calculating Gamma region green function")
 H = 1J/4 * hankel1(0, k*r_g)
 H = np.nan_to_num(H)
+plt.imshow(np.abs(H))
 
 # Omega region scatterer.
 
@@ -100,3 +103,4 @@ u_p = u_p.reshape(250,250)
 u_p[125-47:125+47, 125-47:125+47] =np.matmul(G, np.matmul(f,u)).reshape(94,94)
 plt.imshow(np.abs(u_p+u_input), cmap='jet')
 plt.show()
+
